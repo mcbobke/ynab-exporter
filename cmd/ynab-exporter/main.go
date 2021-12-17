@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/mcbobke/ynab-exporter/logging"
-	"github.com/mcbobke/ynab-exporter/metrics"
+	"github.com/mcbobke/ynab-exporter/internal/logging"
+	"github.com/mcbobke/ynab-exporter/internal/metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
