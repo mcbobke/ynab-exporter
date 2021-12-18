@@ -3,7 +3,7 @@ package collector
 import (
 	"net/http"
 
-	"github.com/mcbobke/ynab-exporter/logging"
+	"github.com/mcbobke/ynab-exporter/internal/logging"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
