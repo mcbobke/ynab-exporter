@@ -16,7 +16,7 @@ type YnabApiClient struct {
 	client http.Client
 }
 
-func (apiClient YnabApiClient) httpRequest(method string, path string, body io.Reader, params map[string]string) *http.Response {
+func (apiClient YnabApiClient) httpRequest(method string, path string, body io.Reader, params map[string]string) []byte {
 	baseUrl := "https://api.youneedabudget.com/v1"
 	request, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, path), body)
 	if err != nil {
@@ -37,9 +37,11 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 	if err != nil {
 		log.Fatalf("Error sending %s to %s [%s]", request.Method, request.URL, err)
 	}
+	defer response.Body.Close()
 
+	rawResponseData, err := io.ReadAll(response.Body)
 	metrics.ApiCallCounter.Inc()
-	return response
+	return rawResponseData
 }
 
 func (apiClient YnabApiClient) GetBudgets() budget.BudgetData {
@@ -51,13 +53,7 @@ func (apiClient YnabApiClient) GetBudgets() budget.BudgetData {
 
 	response := apiClient.httpRequest("GET", "/budgets", nil, params)
 
-	rawResponseData, err := io.ReadAll(response.Body)
-	defer response.Body.Close()
-	if err != nil {
-		log.Fatalf("Error getting budgets [%s]", err)
-	}
-
-	err = json.Unmarshal(rawResponseData, &budgetData)
+	err := json.Unmarshal(response, &budgetData)
 	if err != nil {
 		log.Fatalf("Error unmarshaling budget data [%s]", err)
 	}
