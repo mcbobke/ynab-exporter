@@ -28,6 +28,7 @@ func (ynabCollector YnabCollector) Collect(chan<- prometheus.Metric) {
 	budgets := ynabCollector.client.GetBudgets()
 	for _, val := range budgets.Budgets {
 		log.Printf("Budget ID: %s", val.Id)
+		log.Println("Accounts:", val.Accounts)
 	}
 	log.Println("Not yet implemented")
 }

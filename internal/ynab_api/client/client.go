@@ -16,7 +16,7 @@ type YnabApiClient struct {
 	client http.Client
 }
 
-func (apiClient YnabApiClient) httpRequest(method string, path string, body io.Reader) *http.Response {
+func (apiClient YnabApiClient) httpRequest(method string, path string, body io.Reader, params map[string]string) *http.Response {
 	baseUrl := "https://api.youneedabudget.com/v1"
 	request, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, path), body)
 	if err != nil {
@@ -24,6 +24,14 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 	}
 
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", apiClient.Token))
+
+	if params != nil {
+		query := request.URL.Query()
+		for key, val := range params {
+			query.Add(key, val)
+		}
+		request.URL.RawQuery = query.Encode()
+	}
 
 	response, err := apiClient.client.Do(request)
 	if err != nil {
@@ -37,7 +45,11 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 func (apiClient YnabApiClient) GetBudgets() budget.BudgetData {
 	var budgetData budget.BudgetResponseData
 
-	response := apiClient.httpRequest("GET", "/budgets", nil)
+	params := map[string]string{
+		"include_accounts": "true",
+	}
+
+	response := apiClient.httpRequest("GET", "/budgets", nil, params)
 
 	rawResponseData, err := io.ReadAll(response.Body)
 	defer response.Body.Close()
