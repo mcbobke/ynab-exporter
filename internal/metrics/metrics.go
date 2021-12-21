@@ -9,13 +9,17 @@ import (
 )
 
 var (
+	namespace string = "ynab"
+	subsystem string = "exporter"
 	ApiCallCounter prometheus.Counter
 )
 
 func init() {
 	ApiCallCounter = promauto.NewCounter(
 		prometheus.CounterOpts{
-			Name: "ynab_api_calls_count",
+			Namespace: namespace,
+			Subsystem: subsystem,
+			Name: "api_calls_count",
 			Help: "Count of calls to the YNAB API",
 		},
 	)
