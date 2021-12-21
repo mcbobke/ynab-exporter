@@ -24,11 +24,10 @@ func (ynabCollector YnabCollector) Describe(ch chan<- *prometheus.Desc) {
 	prometheus.DescribeByCollect(ynabCollector, ch)
 }
 
-func (ynabCollector YnabCollector) Collect(chan<- prometheus.Metric) {
+func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 	budgets := ynabCollector.client.GetBudgets()
 	for _, val := range budgets.Budgets {
 		log.Printf("Budget ID: %s", val.Id)
 		log.Println("Accounts:", val.Accounts)
 	}
-	log.Println("Not yet implemented")
 }
