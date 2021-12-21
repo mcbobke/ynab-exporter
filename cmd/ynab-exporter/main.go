@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/mcbobke/ynab-exporter/internal/collector"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -24,10 +25,9 @@ func init() {
 	} else {
 		log.Fatalln("YNAB token not found")
 	}
+
 	ynabCollector = collector.New(token)
-
-	// TODO: Register Collector
-
+	prometheus.MustRegister(ynabCollector)
 	http.Handle("/metrics", promhttp.Handler())
 }
 
