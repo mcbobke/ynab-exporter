@@ -1,9 +1,12 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+
+	"go.uber.org/zap"
 
 	"github.com/mcbobke/ynab-exporter/internal/collector"
 	"github.com/prometheus/client_golang/prometheus"
@@ -11,29 +14,42 @@ import (
 )
 
 var (
-	modVersion    string = "0.0.1"
-	ynabCollector collector.YnabCollector
+	modVersion string = "0.0.1"
 )
 
-func init() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-	log.SetOutput(os.Stdout)
+func main() {
+	logger, _ := zap.NewProduction()
+	sugar := logger.Sugar()
+	defer logger.Sync()
 
 	token, success := os.LookupEnv("YNAB_API_TOKEN")
 	if success {
-		log.Println("YNAB token found")
+		sugar.Info("YNAB token found")
 	} else {
-		log.Fatalln("YNAB token not found")
+		sugar.Fatal("YNAB token not found")
 	}
 
-	ynabCollector = collector.New(token)
+	ynabCollector := collector.New(token, sugar)
 	prometheus.MustRegister(ynabCollector)
 	http.Handle("/metrics", promhttp.Handler())
-}
 
-func main() {
-	log.Printf("Starting ynab-exporter version %s", modVersion)
-	// TODO: Configure signal handling
-	http.ListenAndServe("localhost:9090", nil)
-	// TODO: Handle signals
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	sugar.Infof("Starting ynab-exporter version %s", modVersion)
+
+	go http.ListenAndServe("localhost:9090", nil)
+
+	signal := <-quit
+	switch signal {
+	case syscall.SIGINT:
+		sugar.Info("Interrupt received, shutting down")
+		os.Exit(0)
+	case syscall.SIGTERM:
+		sugar.Info("Termination received, shutting down")
+		os.Exit(0)
+	default:
+		sugar.Warnf("Unknown signal [%s] received, shutting down", signal)
+		os.Exit(1)
+	}
 }
