@@ -6,5 +6,4 @@ RUN mkdir /output && \
 
 FROM alpine:3.15.0
 COPY --from=builder /output/ynab-exporter /ynab-exporter
-EXPOSE 9090
 ENTRYPOINT [ "/ynab-exporter" ]

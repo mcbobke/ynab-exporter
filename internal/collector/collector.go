@@ -60,6 +60,7 @@ func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 	budgets, err := ynabCollector.Client.GetBudgets()
 	if err != nil {
 		ynabCollector.Logger.Error("Failed to get budget data")
+		return
 	}
 	ynabCollector.Logger.Infof("Retrieved %d budgets", len(budgets.Budgets))
 
@@ -67,6 +68,7 @@ func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 		categoryGroups, err := ynabCollector.Client.GetCategories(budget.Id)
 		if err != nil {
 			ynabCollector.Logger.Error("Failed to get category data")
+			return
 		}
 		ynabCollector.Logger.Debugf("Retrieved %d category groups for budget %s", len(categoryGroups.CategoryGroups), budget.Id)
 

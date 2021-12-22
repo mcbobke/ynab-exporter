@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -59,9 +60,25 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	sugar.Infof("Starting ynab-exporter version %s", modVersion)
+	bindAddr, success := os.LookupEnv("BIND_ADDR")
+	if success {
+		sugar.Debugf("Bind address will be set to %s", bindAddr)
+	} else {
+		sugar.Debug("No bind address set, will bind to 0.0.0.0")
+		bindAddr = "0.0.0.0"
+	}
 
-	go http.ListenAndServe("localhost:9090", nil)
+	port, success := os.LookupEnv("PORT")
+	if success {
+		sugar.Debugf("Port will be set to %s", port)
+	} else {
+		sugar.Debug("No port specified, will run on 9090")
+		port = "9090"
+	}
+
+	sugar.Infof("Starting ynab-exporter version %s, bound to %s on port %s", modVersion, bindAddr, port)
+
+	go http.ListenAndServe(fmt.Sprintf("%s:%s", bindAddr, port), nil)
 
 	signal := <-quit
 	switch signal {
