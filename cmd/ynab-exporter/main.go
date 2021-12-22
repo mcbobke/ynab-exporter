@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"go.uber.org/zap"
@@ -18,9 +19,31 @@ var (
 )
 
 func main() {
-	logger, _ := zap.NewProduction()
+	loggerConfig := zap.NewDevelopmentConfig()
+
+	level, success := os.LookupEnv("LOG_LEVEL")
+	if success {
+		switch strings.ToLower(level) {
+		case "debug":
+			loggerConfig.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+		case "info":
+			loggerConfig.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
+		case "warn":
+			loggerConfig.Level = zap.NewAtomicLevelAt(zap.WarnLevel)
+		case "error":
+			loggerConfig.Level = zap.NewAtomicLevelAt(zap.ErrorLevel)
+		case "fatal":
+			loggerConfig.Level = zap.NewAtomicLevelAt(zap.FatalLevel)
+		default:
+			loggerConfig.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
+		}
+	} else {
+		loggerConfig.Level = zap.NewAtomicLevelAt(zap.InfoLevel)
+	}
+
+	logger, _ := loggerConfig.Build()
 	sugar := logger.Sugar()
-	defer logger.Sync()
+	defer sugar.Sync()
 
 	token, success := os.LookupEnv("YNAB_API_TOKEN")
 	if success {
