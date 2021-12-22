@@ -10,6 +10,7 @@ This project is very much so still in active development, and should be expected
 
 * CI/CD configured with Github Actions (build, test, release, push to Docker Hub)
 * Proper handling of API token secret (offer alternatives to envvar)
+* Proper handling of API response status codes
 * Documentation of exported timeseries
 * Testing
 * Deployment examples (both baremetal and containerized)
