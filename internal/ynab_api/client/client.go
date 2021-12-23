@@ -21,6 +21,16 @@ type YnabApiClient struct {
 
 func (apiClient YnabApiClient) httpRequest(method string, path string, body io.Reader, params map[string]string) ([]byte, error) {
 	baseUrl := "https://api.youneedabudget.com/v1"
+	apiErrorStatusCodes := map[int]string{
+		400: "Bad API request",
+		401: "Not authorized",
+		403: "Subscription has lapsed",
+		404: "Not found",
+		429: "Rate limit reached",
+		500: "Internal server error",
+		503: "API unavailable",
+	}
+
 	request, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, path), body)
 	if err != nil {
 		apiClient.Logger.Errorf("Error creating a new request [%s]", err)
@@ -44,6 +54,12 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 		return []byte{}, fmt.Errorf("error sending %s to %s [%w]", request.Method, request.URL, err)
 	}
 	defer response.Body.Close()
+
+	logLine, ok := apiErrorStatusCodes[response.StatusCode]
+	if ok {
+		apiClient.Logger.Errorf("API response code %d indicates an error [%s]", response.StatusCode, logLine)
+		return []byte{}, fmt.Errorf("API response code %d indicates an error [%s]", response.StatusCode, logLine)
+	}
 
 	rawResponseData, err := io.ReadAll(response.Body)
 	if err != nil {
