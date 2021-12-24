@@ -6,14 +6,16 @@ A Prometheus exporter for the You Need a Budget (YNAB) budgeting software, writt
 
 This project is very much so still in active development, and should be expected to change.
 
-## TODO
+## Exported Timeseries
 
-* CI/CD configured with Github Actions (build, test, release, push to Docker Hub)
-* Proper handling of API token secret (offer alternatives to envvar)
-* Proper handling of API response status codes
-* Documentation of exported timeseries
-* Testing
-* Deployment examples (both baremetal and containerized)
+| Timeseries Name                  | Description                    | Labels                                     |
+|----------------------------------|--------------------------------|--------------------------------------------|
+| `ynab_account_cleared_balance`   | Cleared balance of account     | budget_id, budget_name, account_name, type |
+| `ynab_account_uncleared_balance` | Uncleared balance of account   | budget_id, budget_name, account_name, type |
+| `ynab_category_budgeted`         | Amount budgeted to category    | category_group_name, category_name         |
+| `ynab_category_activity`         | Amount of activity in category | category_group_name, category_name         |
+| `ynab_category_balance`          | Category balance               | category_group_name, category_name         |
+| `ynab_exporter_api_calls_count`  | Count of calls to the YNAB API |                                            |
 
 ## Running the Exporter
 
@@ -40,3 +42,10 @@ $ export YNAB_API_KEY=${key}
 $ docker build -t localhost/ynab-exporter:latest --no-cache .
 $ docker run -ite YNAB_API_TOKEN=${YNAB_API_TOKEN} --name ynab-exporter --rm --publish 9090:9090/tcp localhost/ynab-exporter:latest
 ```
+
+## TODO
+
+* CI/CD configured with Github Actions (build, test, release, push to Docker Hub)
+* Proper handling of API token secret (offer alternatives to envvar)
+* Testing
+* Deployment examples (both baremetal and containerized)
