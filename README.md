@@ -30,7 +30,7 @@ The following environment variables will be read by the exporter:
 
 You can run the exporter in the terminal as follows:
 ```bash
-$ export YNAB_API_KEY=${key}
+$ export YNAB_API_TOKEN=${token}
 $ go run ./cmd/ynab-exporter
 ```
 
@@ -38,7 +38,7 @@ $ go run ./cmd/ynab-exporter
 
 You can run the exporter in a Docker container as follows:
 ```bash
-$ export YNAB_API_KEY=${key}
+$ export YNAB_API_TOKEN=${token}
 $ docker build -t localhost/ynab-exporter:latest --no-cache .
 $ docker run -ite YNAB_API_TOKEN=${YNAB_API_TOKEN} --name ynab-exporter --rm --publish 9090:9090/tcp localhost/ynab-exporter:latest
 ```
