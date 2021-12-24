@@ -8,14 +8,14 @@ This project is very much so still in active development, and should be expected
 
 ## Exported Timeseries
 
-| Timeseries Name                  | Description                    | Labels                                     |
-|----------------------------------|--------------------------------|--------------------------------------------|
-| `ynab_account_cleared_balance`   | Cleared balance of account     | budget_id, budget_name, account_name, type |
-| `ynab_account_uncleared_balance` | Uncleared balance of account   | budget_id, budget_name, account_name, type |
-| `ynab_category_budgeted`         | Amount budgeted to category    | category_group_name, category_name         |
-| `ynab_category_activity`         | Amount of activity in category | category_group_name, category_name         |
-| `ynab_category_balance`          | Category balance               | category_group_name, category_name         |
-| `ynab_exporter_api_calls_count`  | Count of calls to the YNAB API |                                            |
+| Timeseries Name                  | Description                    | Labels                                             |
+|----------------------------------|--------------------------------|----------------------------------------------------|
+| `ynab_account_cleared_balance`   | Cleared balance of account     | `budget_id`, `budget_name`, `account_name`, `type` |
+| `ynab_account_uncleared_balance` | Uncleared balance of account   | `budget_id`, `budget_name`, `account_name`, `type` |
+| `ynab_category_budgeted`         | Amount budgeted to category    | `category_group_name`, `category_name`             |
+| `ynab_category_activity`         | Amount of activity in category | `category_group_name`, `category_name`             |
+| `ynab_category_balance`          | Category balance               | `category_group_name`, `category_name`             |
+| `ynab_exporter_api_calls_count`  | Count of calls to the YNAB API |                                                    |
 
 ## Running the Exporter
 
