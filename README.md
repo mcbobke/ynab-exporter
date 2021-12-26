@@ -22,9 +22,12 @@ This project is very much so still in active development, and should be expected
 ### Configuration
 
 The following environment variables will be read by the exporter:
-* `YNAB_API_TOKEN` - a __required__ variable to set the YNAB API token used by the exporter.
-* `BIND_ADDR` - an optional variable to change the bind address of the exporter. Defaults to `0.0.0.0`.
-* `PORT` - an optional variable to change the port that the exporter bnds to. Defaults to `9090`.
+| Variable Name  | Required? | Default Value | Possible Values                           | Description                                  |
+|----------------|-----------|---------------|-------------------------------------------|----------------------------------------------|
+| YNAB_API_TOKEN | Yes       | None          | Any valid API token                       | Sets the YNAB API token used by the exporter |
+| BIND_ADDR      | No        | `0.0.0.0`     | Any valid IP address or localhost         | Sets the bind address of the exporter        |
+| PORT           | No        | `9090`        | Any valid port                            | Sets the port that the exporter binds to     |
+| LOG_LEVEL      | No        | `INFO`        | `DEBUG`, `INFO`, `WARN`, `ERROR`, `FATAL` | Sets the log level of the exporter           |
 
 ### Running Locally
 
