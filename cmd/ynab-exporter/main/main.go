@@ -10,13 +10,10 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version"
 	"github.com/mcbobke/ynab-exporter/internal/collector"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-)
-
-var (
-	modVersion string = "0.0.1"
 )
 
 func main() {
@@ -76,7 +73,7 @@ func main() {
 		port = "9090"
 	}
 
-	sugar.Infof("Starting ynab-exporter version %s, bound to %s on port %s", modVersion, bindAddr, port)
+	sugar.Infof("Starting ynab-exporter version %s, bound to %s on port %s", version.BuildVersion, bindAddr, port)
 
 	go http.ListenAndServe(fmt.Sprintf("%s:%s", bindAddr, port), nil)
 
