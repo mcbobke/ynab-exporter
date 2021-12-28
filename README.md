@@ -44,7 +44,7 @@ $ go build -o /tmp/ynab-exporter -ldflags "-X 'github.com/mcbobke/ynab-exporter/
 $ /tmp/ynab-exporter
 ```
 
-### Running in Docker
+### Running Locally in Docker
 
 You can run the exporter in a Docker container as follows:
 ```bash
@@ -53,8 +53,16 @@ $ docker build -t localhost/ynab-exporter:latest --no-cache --build-arg BUILD_TI
 $ docker run -ite YNAB_API_TOKEN=${YNAB_API_TOKEN} --name ynab-exporter --rm --publish 9090:9090/tcp localhost/ynab-exporter:latest
 ```
 
+## Deploying the Exporter
+
+The exporter can be deployed in a few different ways:
+* Deployed to a baremetal or virtual machine and set up as a systemd service (or whatever other init system you use)
+* Deployed via docker-compose to a standalone Docker machine
+* Deployed to a Kubernetes cluster
+
+See the [examples](./examples) directory.
+
 ## TODO
 
 * Proper handling of API token secret (offer alternatives to envvar)
 * Testing
-* Deployment examples (both baremetal and containerized)
