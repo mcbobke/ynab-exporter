@@ -21,7 +21,7 @@ func init() {
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Subsystem: subsystem,
-			Name:      "ynab_exporter_build_info",
+			Name:      "build_info",
 			Help:      "Build info for this instance of ynab-exporter",
 			ConstLabels: prometheus.Labels{
 				"build_version": version.BuildVersion,
@@ -29,6 +29,8 @@ func init() {
 			},
 		},
 	)
+
+	BuildVersionInfo.Set(float64(1))
 
 	ApiCallCounter = promauto.NewCounter(
 		prometheus.CounterOpts{
