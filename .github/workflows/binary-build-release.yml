@@ -23,10 +23,7 @@ jobs:
       
       - name: Build ynab-exporter
         shell: bash
-        run: >-
-          BUILD_VERSION=${GITHUB_REF_NAME}
-          BUILD_TIME=$(date +%s)
-          go build -o /tmp/ynab-exporter -ldflags "-X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildTime=${BUILD_TIME}' -X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildVersion=${BUILD_VERSION}'" ./cmd/ynab-exporter
+        run: go build -o /tmp/ynab-exporter -ldflags "-X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildTime=$(date +%s)' -X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildVersion=${GITHUB_REF_NAME}'" ./cmd/ynab-exporter
       
       - name: Upload artifact
         uses: actions/upload-artifact@v2.3.1

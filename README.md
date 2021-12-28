@@ -33,8 +33,14 @@ The following environment variables will be read by the exporter:
 
 You can run the exporter in the terminal as follows:
 ```bash
+# Without an explicit build
 $ export YNAB_API_TOKEN=${token}
 $ go run ./cmd/ynab-exporter
+
+# With an explicit build
+$ export YNAB_API_TOKEN=${token}
+$ go build -o /tmp/ynab-exporter -ldflags "-X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildTime=$(date +%s)' -X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildVersion=local'" ./cmd/ynab-exporter
+$ /tmp/ynab-exporter
 ```
 
 ### Running in Docker
@@ -42,13 +48,12 @@ $ go run ./cmd/ynab-exporter
 You can run the exporter in a Docker container as follows:
 ```bash
 $ export YNAB_API_TOKEN=${token}
-$ docker build -t localhost/ynab-exporter:latest --no-cache .
+$ docker build -t localhost/ynab-exporter:latest --no-cache --build-arg BUILD_TIME=$(date +%s) --build-arg BUILD_VERSION=local .
 $ docker run -ite YNAB_API_TOKEN=${YNAB_API_TOKEN} --name ynab-exporter --rm --publish 9090:9090/tcp localhost/ynab-exporter:latest
 ```
 
 ## TODO
 
-* CI/CD configured with Github Actions (build, test, release, push to Docker Hub)
 * Proper handling of API token secret (offer alternatives to envvar)
 * Testing
 * Deployment examples (both baremetal and containerized)
