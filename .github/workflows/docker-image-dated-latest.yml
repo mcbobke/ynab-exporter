@@ -13,13 +13,14 @@ jobs:
     - uses: actions/checkout@v2.4.0
       with:
         fetch-depth: 0
+        token: ${{ secrets.ACCESS_TOKEN }}
 
     # Will trigger the versioned release workflow
     - name: Bump version and push tag
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.0
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.ACCESS_TOKEN }}
         # Setting to false so that repo meta-commits don't create tags
         default_bump: false
         tag_prefix: v
