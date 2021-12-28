@@ -55,6 +55,8 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 	}
 	defer response.Body.Close()
 
+	metrics.ApiCallCounter.Inc()
+
 	logLine, ok := apiErrorStatusCodes[response.StatusCode]
 	if ok {
 		apiClient.Logger.Errorf("API response code %d indicates an error [%s]", response.StatusCode, logLine)
@@ -67,7 +69,6 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 		return []byte{}, fmt.Errorf("error reading API response data [%w]", err)
 	}
 
-	metrics.ApiCallCounter.Inc()
 	return rawResponseData, nil
 }
 
