@@ -39,7 +39,7 @@ jobs:
       shell: bash
       env:
         DOCKERHUB_ACCESS_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
-      run: docker login --username mcbobke --password ${DOCKERHUB_ACCESS_TOKEN}
+      run: echo ${DOCKERHUB_ACCESS_TOKEN} | docker login --username mcbobke --password-stdin
       
     - name: Push image (all tags)
       shell: bash
