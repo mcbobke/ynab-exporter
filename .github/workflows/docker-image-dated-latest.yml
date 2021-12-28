@@ -6,11 +6,12 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build, Tag and Push
     runs-on: ubuntu-20.04
     if: ${{ !contains(github.event.head_commit.message, '!skipci') && github.repository == 'mcbobke/ynab-exporter' }}
     steps:
-    - uses: actions/checkout@v2.4.0
+    - name: Checkout main HEAD
+      uses: actions/checkout@v2.4.0
       with:
         fetch-depth: 0
         token: ${{ secrets.ACCESS_TOKEN }}

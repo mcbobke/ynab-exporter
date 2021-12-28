@@ -48,12 +48,11 @@ jobs:
           name: ynab-exporter-binary
 
       - name: Create release
-        id: created_release
         uses:  ncipollo/release-action@v1.9.0
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
-          tag: ${{ github.ref }}
-          name: ${{ github.ref }}
+          tag: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           draft: true
           prerelease: false
           artifacts: ./ynab-exporter
