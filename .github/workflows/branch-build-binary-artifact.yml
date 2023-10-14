@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build Binary
+    name: Build and Upload Binary
     runs-on: ubuntu-20.04
     strategy:
       matrix:
