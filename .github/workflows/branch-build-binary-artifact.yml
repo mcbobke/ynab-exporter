@@ -13,7 +13,7 @@ jobs:
         go-version: [1.21.3]
       fail-fast: true
     steps:
-      - name: Checkout tag
+      - name: Checkout branch
         uses: actions/checkout@v4.1.0
       
       - name: Setup go ${{ matrix.go-version }}
