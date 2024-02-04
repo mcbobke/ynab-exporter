@@ -1,0 +1,32 @@
+name: Docker Image CI - Main - Versioned
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    name: Build and Push
+    runs-on: ubuntu-20.04
+    if: ${{ !contains(github.event.head_commit.message, '!skipci') && github.repository == 'mcbobke/ynab-exporter' }}
+    steps:
+    - name: Checkout tag
+      uses: actions/checkout@v2.4.0
+
+    - name: Build Docker image
+      shell: bash
+      run: >-
+        docker build . --file Dockerfile
+        --tag mcbobke/ynab-exporter:${GITHUB_REF_NAME}
+        --build-arg BUILD_VERSION=${GITHUB_REF_NAME}
+        --build-arg BUILD_TIME=$(date +%s)
+    
+    - name: Log in to Docker Hub
+      shell: bash
+      env:
+        DOCKERHUB_ACCESS_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+      run: echo ${DOCKERHUB_ACCESS_TOKEN} | docker login --username mcbobke --password-stdin
+      
+    - name: Push image (all tags)
+      shell: bash
+      run: docker push --all-tags mcbobke/ynab-exporter
