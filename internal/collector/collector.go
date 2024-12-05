@@ -1,3 +1,4 @@
+// Package collector provides an implementation of prometheus.Collector for metrics collection.
 package collector
 
 import (
@@ -24,38 +25,42 @@ var (
 	categoryBudgetedDesc = prometheus.NewDesc(
 		"ynab_category_budgeted",
 		"Amount budgeted to category",
-		[]string{"category_group_name", "category_name"},
+		[]string{"budget_id", "budget_name", "category_group_name", "category_name"},
 		nil,
 	)
 	categoryActivityDesc = prometheus.NewDesc(
 		"ynab_category_activity",
 		"Amount of activity in category",
-		[]string{"category_group_name", "category_name"},
+		[]string{"budget_id", "budget_name", "category_group_name", "category_name"},
 		nil,
 	)
 	categoryBalanceDesc = prometheus.NewDesc(
 		"ynab_category_balance",
 		"Category balance",
-		[]string{"category_group_name", "category_name"},
+		[]string{"budget_id", "budget_name", "category_group_name", "category_name"},
 		nil,
 	)
 )
 
+// YnabCollector implements the prometheus.Collector interface.
 type YnabCollector struct {
 	Client client.YnabApiClient
 	Logger *zap.SugaredLogger
 }
 
+// New returns an instance of the YnabCollector struct.
 func New(ynabToken string, logger *zap.SugaredLogger) YnabCollector {
 	httpClient := http.DefaultClient
 	ynabClient := client.YnabApiClient{Token: ynabToken, Client: httpClient, Logger: logger}
 	return YnabCollector{Client: ynabClient, Logger: logger}
 }
 
+// Describe delegates to prometheus.DescribeByCollect to send metrics descriptors to ch.
 func (ynabCollector YnabCollector) Describe(ch chan<- *prometheus.Desc) {
 	prometheus.DescribeByCollect(ynabCollector, ch)
 }
 
+// Collect is called by the default prometheus.Registry to collect data from the YNAB API and return timeseries.
 func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 	budgets, err := ynabCollector.Client.GetBudgets()
 	if err != nil {
@@ -95,21 +100,21 @@ func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 					categoryBudgetedDesc,
 					prometheus.GaugeValue,
 					float64(category.Budgeted)/float64(1000),
-					[]string{categoryGroup.Name, category.Name}...,
+					[]string{budget.Id, budget.Name, categoryGroup.Name, category.Name}...,
 				)
 
 				ch <- prometheus.MustNewConstMetric(
 					categoryActivityDesc,
 					prometheus.GaugeValue,
 					float64(category.Activity)/float64(1000),
-					[]string{categoryGroup.Name, category.Name}...,
+					[]string{budget.Id, budget.Name, categoryGroup.Name, category.Name}...,
 				)
 
 				ch <- prometheus.MustNewConstMetric(
 					categoryBalanceDesc,
 					prometheus.GaugeValue,
 					float64(category.Balance)/float64(1000),
-					[]string{categoryGroup.Name, category.Name}...,
+					[]string{budget.Id, budget.Name, categoryGroup.Name, category.Name}...,
 				)
 			}
 		}
