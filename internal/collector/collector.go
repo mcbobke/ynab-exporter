@@ -44,14 +44,14 @@ var (
 
 // YnabCollector implements the prometheus.Collector interface.
 type YnabCollector struct {
-	Client client.YnabApiClient
+	Client client.YnabAPIClient
 	Logger *zap.SugaredLogger
 }
 
 // New returns an instance of the YnabCollector struct.
 func New(ynabToken string, logger *zap.SugaredLogger) YnabCollector {
 	httpClient := http.DefaultClient
-	ynabClient := client.YnabApiClient{Token: ynabToken, Client: httpClient, Logger: logger}
+	ynabClient := client.YnabAPIClient{Token: ynabToken, Client: httpClient, Logger: logger}
 	return YnabCollector{Client: ynabClient, Logger: logger}
 }
 
@@ -74,7 +74,7 @@ func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 	ynabCollector.Logger.Infof("Retrieved %d budgets", len(budgets.Budgets))
 
 	for _, budget := range budgets.Budgets {
-		categoryGroups, err := ynabCollector.Client.GetCategories(budget.Id)
+		categoryGroups, err := ynabCollector.Client.GetCategories(budget.ID)
 		if err != nil {
 			ynabCollector.Logger.Error("Failed to get category data")
 			ch <- prometheus.NewInvalidMetric(
@@ -83,7 +83,7 @@ func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 				err)
 			return
 		}
-		ynabCollector.Logger.Debugf("Retrieved %d category groups for budget %s", len(categoryGroups.CategoryGroups), budget.Id)
+		ynabCollector.Logger.Debugf("Retrieved %d category groups for budget %s", len(categoryGroups.CategoryGroups), budget.ID)
 
 		for _, categoryGroup := range categoryGroups.CategoryGroups {
 			if categoryGroup.Hidden || categoryGroup.Deleted {
@@ -100,26 +100,26 @@ func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 					categoryBudgetedDesc,
 					prometheus.GaugeValue,
 					float64(category.Budgeted)/float64(1000),
-					[]string{budget.Id, budget.Name, categoryGroup.Name, category.Name}...,
+					[]string{budget.ID, budget.Name, categoryGroup.Name, category.Name}...,
 				)
 
 				ch <- prometheus.MustNewConstMetric(
 					categoryActivityDesc,
 					prometheus.GaugeValue,
 					float64(category.Activity)/float64(1000),
-					[]string{budget.Id, budget.Name, categoryGroup.Name, category.Name}...,
+					[]string{budget.ID, budget.Name, categoryGroup.Name, category.Name}...,
 				)
 
 				ch <- prometheus.MustNewConstMetric(
 					categoryBalanceDesc,
 					prometheus.GaugeValue,
 					float64(category.Balance)/float64(1000),
-					[]string{budget.Id, budget.Name, categoryGroup.Name, category.Name}...,
+					[]string{budget.ID, budget.Name, categoryGroup.Name, category.Name}...,
 				)
 			}
 		}
 
-		ynabCollector.Logger.Debugf("Retrieved %d accounts for budget %s", len(budget.Accounts), budget.Id)
+		ynabCollector.Logger.Debugf("Retrieved %d accounts for budget %s", len(budget.Accounts), budget.ID)
 		for _, account := range budget.Accounts {
 			if account.Closed || account.Deleted {
 				continue
@@ -129,14 +129,14 @@ func (ynabCollector YnabCollector) Collect(ch chan<- prometheus.Metric) {
 				accountClearedBalanceDesc,
 				prometheus.GaugeValue,
 				float64(account.ClearedBalance)/float64(1000),
-				[]string{budget.Id, budget.Name, account.Name, account.Type}...,
+				[]string{budget.ID, budget.Name, account.Name, account.Type}...,
 			)
 
 			ch <- prometheus.MustNewConstMetric(
 				accountUnclearedBalanceDesc,
 				prometheus.GaugeValue,
 				float64(account.UnclearedBalance)/float64(1000),
-				[]string{budget.Id, budget.Name, account.Name, account.Type}...,
+				[]string{budget.ID, budget.Name, account.Name, account.Type}...,
 			)
 		}
 	}

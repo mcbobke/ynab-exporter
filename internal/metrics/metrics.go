@@ -1,7 +1,5 @@
+// Package metrics contains meta-metrics for this exporter itself.
 package metrics
-
-// Contains the metrics for this exporter itself
-// Meta-metrics, if you will
 
 import (
 	"github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version"
@@ -10,14 +8,16 @@ import (
 )
 
 var (
-	namespace        string = "ynab"
-	subsystem        string = "exporter"
-	BuildVersionInfo prometheus.Gauge
-	ApiCallCounter   prometheus.Counter
+	namespace        = "ynab"
+	subsystem        = "exporter"
+	buildVersionInfo prometheus.Gauge
+
+	// APICallCounter is incremented every time the YNAB API is called.
+	APICallCounter prometheus.Counter
 )
 
 func init() {
-	BuildVersionInfo = promauto.NewGauge(
+	buildVersionInfo = promauto.NewGauge(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
 			Subsystem: subsystem,
@@ -30,9 +30,9 @@ func init() {
 		},
 	)
 
-	BuildVersionInfo.Set(float64(1))
+	buildVersionInfo.Set(float64(1))
 
-	ApiCallCounter = promauto.NewCounter(
+	APICallCounter = promauto.NewCounter(
 		prometheus.CounterOpts{
 			Namespace: namespace,
 			Subsystem: subsystem,

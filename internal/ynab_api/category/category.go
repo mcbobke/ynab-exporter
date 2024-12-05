@@ -1,11 +1,13 @@
+// Package category declares structs to model the response data of the YNAB API /budgets/{budget_id}/categories endpoint.
 package category
 
+// Category describes a single budget category within a group.
 type Category struct {
-	Id                      string `json:"id,omitempty"`
-	CategoryGroupId         string `json:"category_group_id,omitempty"`
+	ID                      string `json:"id,omitempty"`
+	CategoryGroupID         string `json:"category_group_id,omitempty"`
 	Name                    string `json:"name,omitempty"`
 	Hidden                  bool   `json:"hidden,omitempty"`
-	OriginalCategoryGroupId string `json:"original_category_group_id,omitempty"`
+	OriginalCategoryGroupID string `json:"original_category_group_id,omitempty"`
 	Note                    string `json:"note,omitempty"`
 	Budgeted                int    `json:"budgeted,omitempty"`
 	Activity                int    `json:"activity,omitempty"`
@@ -22,19 +24,22 @@ type Category struct {
 	Deleted                 bool   `json:"deleted,omitempty"`
 }
 
-type CategoryGroup struct {
-	Id         string     `json:"id,omitempty"`
+// Group contains the list of all categories within a specific group.
+type Group struct {
+	ID         string     `json:"id,omitempty"`
 	Name       string     `json:"name,omitempty"`
 	Hidden     bool       `json:"hidden,omitempty"`
 	Deleted    bool       `json:"deleted,omitempty"`
 	Categories []Category `json:"categories,omitempty"`
 }
 
-type CategoryData struct {
-	CategoryGroups  []CategoryGroup `json:"category_groups,omitempty"`
-	ServerKnowledge int             `json:"server_knowledge,omitempty"`
+// Data contains the list of all category groups for a specific budget.
+type Data struct {
+	CategoryGroups  []Group `json:"category_groups,omitempty"`
+	ServerKnowledge int     `json:"server_knowledge,omitempty"`
 }
 
-type CategoryResponseData struct {
-	Data CategoryData `json:"data,omitempty"`
+// Response is the top-level struct that the API response is unmarshaled into.
+type Response struct {
+	Data Data `json:"data,omitempty"`
 }
