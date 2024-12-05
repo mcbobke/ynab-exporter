@@ -1,3 +1,4 @@
+// Package client provides a client for the YNAB API.
 package client
 
 import (
@@ -13,14 +14,15 @@ import (
 	"go.uber.org/zap"
 )
 
-type YnabApiClient struct {
+// YnabAPIClient is the API client.
+type YnabAPIClient struct {
 	Token  string
 	Client *http.Client
 	Logger *zap.SugaredLogger
 }
 
-func (apiClient YnabApiClient) httpRequest(method string, path string, body io.Reader, params map[string]string) ([]byte, error) {
-	baseUrl := "https://api.youneedabudget.com/v1"
+func (apiClient YnabAPIClient) httpRequest(method string, path string, body io.Reader, params map[string]string) ([]byte, error) {
+	baseURL := "https://api.youneedabudget.com/v1"
 	apiErrorStatusCodes := map[int]string{
 		400: "Bad API request",
 		401: "Not authorized",
@@ -31,7 +33,7 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 		503: "API unavailable",
 	}
 
-	request, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseUrl, path), body)
+	request, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseURL, path), body)
 	if err != nil {
 		apiClient.Logger.Errorf("Error creating a new request [%s]", err)
 		return []byte{}, fmt.Errorf("error creating a new request [%w]", err)
@@ -55,7 +57,7 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 	}
 	defer response.Body.Close()
 
-	metrics.ApiCallCounter.Inc()
+	metrics.APICallCounter.Inc()
 
 	logLine, ok := apiErrorStatusCodes[response.StatusCode]
 	if ok {
@@ -72,8 +74,9 @@ func (apiClient YnabApiClient) httpRequest(method string, path string, body io.R
 	return rawResponseData, nil
 }
 
-func (apiClient YnabApiClient) GetBudgets() (budget.BudgetData, error) {
-	var budgetData budget.BudgetResponseData
+// GetBudgets returns the budget data for a YNAB account.
+func (apiClient YnabAPIClient) GetBudgets() (budget.Data, error) {
+	var unmarshaledResponse budget.Response
 
 	params := map[string]string{
 		"include_accounts": "true",
@@ -82,37 +85,38 @@ func (apiClient YnabApiClient) GetBudgets() (budget.BudgetData, error) {
 	response, err := apiClient.httpRequest("GET", "/budgets", nil, params)
 	if err != nil {
 		apiClient.Logger.Error("Failed to get budget data")
-		return budget.BudgetData{}, errors.New("failed to get budget data")
+		return budget.Data{}, errors.New("failed to get budget data")
 	}
 
-	err = json.Unmarshal(response, &budgetData)
+	err = json.Unmarshal(response, &unmarshaledResponse)
 	if err != nil {
 		apiClient.Logger.Errorf("Error unmarshaling budget data [%s]", err)
-		return budget.BudgetData{}, fmt.Errorf("error unmarshaling budget data [%w]", err)
+		return budget.Data{}, fmt.Errorf("error unmarshaling budget data [%w]", err)
 	}
 
-	return budgetData.Data, nil
+	return unmarshaledResponse.Data, nil
 }
 
-func (apiClient YnabApiClient) GetCategories(budgetId string) (category.CategoryData, error) {
-	var categoryData category.CategoryResponseData
+// GetCategories returns the category data for a budget.
+func (apiClient YnabAPIClient) GetCategories(budgetID string) (category.Data, error) {
+	var unmarshaledResponse category.Response
 
 	response, err := apiClient.httpRequest(
 		"GET",
-		fmt.Sprintf("/budgets/%s/categories", budgetId),
+		fmt.Sprintf("/budgets/%s/categories", budgetID),
 		nil,
 		nil,
 	)
 	if err != nil {
 		apiClient.Logger.Error("Failed to get category data")
-		return category.CategoryData{}, errors.New("failed to get category data")
+		return category.Data{}, errors.New("failed to get category data")
 	}
 
-	err = json.Unmarshal(response, &categoryData)
+	err = json.Unmarshal(response, &unmarshaledResponse)
 	if err != nil {
 		apiClient.Logger.Errorf("Error unmarshaling category data [%s]", err)
-		return category.CategoryData{}, fmt.Errorf("error unmarshaling category data [%w]", err)
+		return category.Data{}, fmt.Errorf("error unmarshaling category data [%w]", err)
 	}
 
-	return categoryData.Data, nil
+	return unmarshaledResponse.Data, nil
 }

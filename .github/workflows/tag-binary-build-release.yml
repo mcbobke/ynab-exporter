@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go-version: [1.21.3]
+        go-version: [1.23.4]
       fail-fast: true
     steps:
       - name: Checkout tag
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4.2.2
       
       - name: Setup go ${{ matrix.go-version }}
-        uses: actions/setup-go@v4.1.0
+        uses: actions/setup-go@v5.1.0
         with:
           go-version: ${{ matrix.go-version }}
       
@@ -26,7 +26,7 @@ jobs:
         run: go build -o /tmp/ynab-exporter -ldflags "-X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildTime=$(date +%s)' -X 'github.com/mcbobke/ynab-exporter/cmd/ynab-exporter/version.BuildVersion=${GITHUB_REF_NAME}'" ./cmd/ynab-exporter
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: ynab-exporter-binary
           path: /tmp/ynab-exporter
@@ -37,15 +37,15 @@ jobs:
     needs: build
     steps:
       - name: Checkout tag
-        uses: actions/checkout@v4.1.0
+        uses: actions/checkout@v4.2.2
 
       - name: Download artifact
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v4.1.8
         with:
           name: ynab-exporter-binary
 
       - name: Create release
-        uses:  ncipollo/release-action@v1.13.0
+        uses:  ncipollo/release-action@v1.14.0
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
           tag: ${{ github.ref_name }}

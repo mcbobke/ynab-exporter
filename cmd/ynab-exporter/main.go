@@ -1,3 +1,4 @@
+// Package main provides the exporter's entrypoint.
 package main
 
 import (

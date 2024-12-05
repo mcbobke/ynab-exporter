@@ -1,10 +1,13 @@
+// Package budget declares structs to model the response data of the YNAB API /budgets endpoint.
 package budget
 
-type DateFormatStruct struct {
+// DateFormat describes the interpretation of timestamp data returned with a budget.
+type DateFormat struct {
 	Format string `json:"format"`
 }
 
-type CurrencyFormatStruct struct {
+// CurrencyFormat describes the interpretation of the currency configured for a budget.
+type CurrencyFormat struct {
 	IsoCode          string `json:"iso_code,omitempty"`
 	ExampleFormat    string `json:"example_format,omitempty"`
 	DecimalDigits    int    `json:"decimal_digits,omitempty"`
@@ -15,8 +18,9 @@ type CurrencyFormatStruct struct {
 	DisplaySymbol    bool   `json:"display_symbol,omitempty"`
 }
 
+// Account represents a single account within a budget in YNAB.
 type Account struct {
-	Id                  string `json:"id,omitempty"`
+	ID                  string `json:"id,omitempty"`
 	Name                string `json:"name,omitempty"`
 	Type                string `json:"type,omitempty"`
 	OnBudget            bool   `json:"on_budget,omitempty"`
@@ -25,28 +29,31 @@ type Account struct {
 	Balance             int    `json:"balance,omitempty"`
 	ClearedBalance      int    `json:"cleared_balance,omitempty"`
 	UnclearedBalance    int    `json:"uncleared_balance,omitempty"`
-	TransferPayeeId     string `json:"transfer_payee_id,omitempty"`
+	TransferPayeeID     string `json:"transfer_payee_id,omitempty"`
 	DirectImportLinked  bool   `json:"direct_import_linked,omitempty"`
 	DirectImportInError bool   `json:"direct_import_in_error,omitempty"`
 	Deleted             bool   `json:"deleted,omitempty"`
 }
 
+// Budget represents a single budget configured in YNAB.
 type Budget struct {
-	Id             string               `json:"id,omitempty"`
-	Name           string               `json:"name,omitempty"`
-	LastModifiedOn string               `json:"last_modified_on,omitempty"`
-	FirstMonth     string               `json:"first_month,omitempty"`
-	LastMonth      string               `json:"last_month,omitempty"`
-	DateFormat     DateFormatStruct     `json:"date_format,omitempty"`
-	CurrencyFormat CurrencyFormatStruct `json:"currency_format,omitempty"`
-	Accounts       []Account            `json:"accounts,omitempty"`
+	ID             string         `json:"id,omitempty"`
+	Name           string         `json:"name,omitempty"`
+	LastModifiedOn string         `json:"last_modified_on,omitempty"`
+	FirstMonth     string         `json:"first_month,omitempty"`
+	LastMonth      string         `json:"last_month,omitempty"`
+	DateFormat     DateFormat     `json:"date_format,omitempty"`
+	CurrencyFormat CurrencyFormat `json:"currency_format,omitempty"`
+	Accounts       []Account      `json:"accounts,omitempty"`
 }
 
-type BudgetData struct {
+// Data contains the list of all budgets account-wide and the account's default budget.
+type Data struct {
 	Budgets       []Budget `json:"budgets,omitempty"`
 	DefaultBudget Budget   `json:"default_budget,omitempty"`
 }
 
-type BudgetResponseData struct {
-	Data BudgetData `json:"data,omitempty"`
+// Response is the top-level struct that the API response is unmarshaled into.
+type Response struct {
+	Data Data `json:"data,omitempty"`
 }
