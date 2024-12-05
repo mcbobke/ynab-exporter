@@ -8,15 +8,15 @@ This project is very much so still in active development, and should be expected
 
 ## Exported Timeseries
 
-| Timeseries Name                  | Description                                   | Labels                                             |
-|----------------------------------|-----------------------------------------------|----------------------------------------------------|
-| `ynab_account_cleared_balance`   | Cleared balance of account                    | `budget_id`, `budget_name`, `account_name`, `type` |
-| `ynab_account_uncleared_balance` | Uncleared balance of account                  | `budget_id`, `budget_name`, `account_name`, `type` |
-| `ynab_category_budgeted`         | Amount budgeted to category                   | `category_group_name`, `category_name`             |
-| `ynab_category_activity`         | Amount of activity in category                | `category_group_name`, `category_name`             |
-| `ynab_category_balance`          | Category balance                              | `category_group_name`, `category_name`             |
-| `ynab_exporter_api_calls_count`  | Count of calls to the YNAB API                |                                                    |
-| `ynab_exporter_build_info`       | Build info for this instance of ynab-exporter | `build_version`, `build_time`                      |
+| Timeseries Name                  | Description                                   | Labels                                                                         |
+|----------------------------------|-----------------------------------------------|--------------------------------------------------------------------------------|
+| `ynab_account_cleared_balance`   | Cleared balance of account                    | `budget_id`, `budget_name`, `account_name`, `type`                             |
+| `ynab_account_uncleared_balance` | Uncleared balance of account                  | `budget_id`, `budget_name`, `account_name`, `type`                             |
+| `ynab_category_budgeted`         | Amount budgeted to category                   | `budget_id`, `budget_name`, `category_group_name`, `category_name`             |
+| `ynab_category_activity`         | Amount of activity in category                | `budget_id`, `budget_name`, `category_group_name`, `category_name`             |
+| `ynab_category_balance`          | Category balance                              | `budget_id`, `budget_name`, `category_group_name`, `category_name`             |
+| `ynab_exporter_api_calls_count`  | Count of calls to the YNAB API                |                                                                                |
+| `ynab_exporter_build_info`       | Build info for this instance of ynab-exporter | `build_version`, `build_time`                                                  |
 
 ## Running the Exporter
 
